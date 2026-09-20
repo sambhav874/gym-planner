@@ -25,3 +25,19 @@ export function formatPlanWeekday(value: string): string {
 export function planEndDate(startDate: string, dayCount: number): string {
   return addDaysToIso(startDate, Math.max(dayCount - 1, 0));
 }
+
+export function todayIso(timeZone = "Asia/Kolkata"): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone,
+  }).formatToParts(new Date());
+  const part = (type: string) => parts.find((item) => item.type === type)?.value || "";
+  return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+export function planDayForDate(startDate: string, date: string): number | undefined {
+  const offset = Math.round((planDate(date).getTime() - planDate(startDate).getTime()) / 86400000);
+  return offset < 0 ? undefined : offset + 1;
+}

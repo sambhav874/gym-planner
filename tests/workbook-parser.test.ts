@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { parseWorkbook } from "../lib/workbook-parser";
+import { dayStatus, emptyWorkoutSession } from "../lib/tracking";
 
 async function fixture(name: string): Promise<ArrayBuffer> {
   const file = await readFile(resolve(process.cwd(), "data", name));
@@ -50,5 +51,12 @@ describe("workbook parser", () => {
     expect(plan.days[0].exercises).toHaveLength(2);
     expect(plan.days[0].exercises[1].sets).toBe("2");
     expect(plan.days[0].cardio).toBe("Incline treadmill 15 min");
+  });
+
+  it("marks dated sessions by calendar status", () => {
+    expect(dayStatus("2026-09-14", 1, "2026-09-20", null)).toBe("not-done");
+    expect(dayStatus("2026-09-14", 7, "2026-09-20", null)).toBe("today");
+    expect(dayStatus("2026-09-14", 8, "2026-09-20", null)).toBe("planned");
+    expect(dayStatus("2026-09-14", 1, "2026-09-20", { ...emptyWorkoutSession("sambhav", 1, "2026-09-14"), completedAt: "2026-09-14T20:00:00.000Z" })).toBe("done");
   });
 });

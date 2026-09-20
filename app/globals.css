@@ -102,6 +102,10 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .status-pill.done { color: var(--green); }
 .status-pill.next { color: var(--blue); }
 .status-pill.rest { color: var(--muted); }
+.status-pill.in-progress { color: var(--blue); }
+.status-pill.not-done { color: var(--red); }
+.status-pill.today { color: var(--red); background: var(--red-soft); }
+.status-pill.planned { color: var(--muted); }
 .member-list { display: grid; }
 .member-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--rule); }
 .member-row:first-child { border-top: 0; padding-top: 0; }
