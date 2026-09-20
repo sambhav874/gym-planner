@@ -6,6 +6,7 @@ import { activity } from "@/lib/demo-data";
 import { addDaysToIso, formatPlanDate, formatPlanWeekday, planDayForDate, todayIso } from "@/lib/date-utils";
 import type { Member, PlanAssignment } from "@/lib/types";
 import { dayStatus, readWorkoutSession, type DayStatus, type WorkoutSession } from "@/lib/tracking";
+import { OnboardingCard } from "./onboarding";
 
 const statusLabels: Record<DayStatus, string> = {
   done: "Done",
@@ -13,6 +14,7 @@ const statusLabels: Record<DayStatus, string> = {
   "not-done": "Not done",
   today: "Today",
   planned: "Planned",
+  skipped: "Skipped",
 };
 
 export function Dashboard({ members, assignment }: { members: Member[]; assignment: PlanAssignment }) {
@@ -39,6 +41,8 @@ export function Dashboard({ members, assignment }: { members: Member[]; assignme
         <div><div className="eyebrow">{formatPlanWeekday(today)}, {formatPlanDate(today)}</div><h1>Good morning, Sambhav.</h1><p>Start with today’s plan. Everything else can wait.</p></div>
         <div className="top-actions"><Link className="button ghost" href="/import">Trainer tools</Link><span className="avatar large">SJ</span></div>
       </div>
+
+      <OnboardingCard />
 
       <div className="today-card card">
         <div><div className="eyebrow">Today · Day {currentDay?.planDay}</div><h2>{currentDay?.focus || "Your plan"}</h2><p>{currentDay?.isRecovery ? "A lighter day still counts." : `${currentDay?.exercises.length || 0} movements to complete`} · <strong>{statusLabels[currentStatus]}</strong></p></div>

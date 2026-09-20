@@ -58,5 +58,6 @@ describe("workbook parser", () => {
     expect(dayStatus("2026-09-14", 7, "2026-09-20", null)).toBe("today");
     expect(dayStatus("2026-09-14", 8, "2026-09-20", null)).toBe("planned");
     expect(dayStatus("2026-09-14", 1, "2026-09-20", { ...emptyWorkoutSession("sambhav", 1, "2026-09-14"), completedAt: "2026-09-14T20:00:00.000Z" })).toBe("done");
+    expect(dayStatus("2026-09-14", 2, "2026-09-20", { ...emptyWorkoutSession("sambhav", 2, "2026-09-15"), skippedAt: "2026-09-15T20:00:00.000Z", skipReason: "Travel" })).toBe("skipped");
   });
 });

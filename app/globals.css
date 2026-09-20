@@ -73,6 +73,17 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .today-card h2 { margin: 8px 0 5px; font-size: clamp(24px, 3vw, 34px); letter-spacing: -.06em; }
 .today-card p { margin: 0; color: var(--muted); font-size: 13px; }
 .today-card p strong { color: var(--ink); }
+.onboarding-card { margin-bottom: 18px; border-color: var(--ink); }
+.onboarding-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.onboarding-header h2 { margin: 7px 0 4px; font-size: 22px; }
+.onboarding-header p { color: var(--muted); font-size: 12px; margin: 0; }
+.onboarding-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 20px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.onboarding-step { display: flex; gap: 10px; padding: 15px 14px 15px 0; border-left: 1px solid var(--rule); }
+.onboarding-step:first-child { border-left: 0; }
+.onboarding-step > span { width: 24px; height: 24px; display: grid; place-items: center; flex: 0 0 auto; background: var(--ink); color: white; font-size: 11px; font-weight: 800; }
+.onboarding-step strong { display: block; font-size: 12px; }
+.onboarding-step p { color: var(--muted); font-size: 11px; line-height: 1.4; margin: 4px 0 0; }
+.onboarding-footer { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
 .quick-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--rule); background: var(--surface); margin-top: 12px; }
 .quick-stat { padding: 15px 18px; border-left: 1px solid var(--rule); }
 .quick-stat:first-child { border-left: 0; }
@@ -183,6 +194,13 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .exercise-name { font-size: 14px; font-weight: 800; }
 .exercise-meta { color: var(--muted); font-size: 11px; margin-top: 4px; }
 .exercise-notes { color: var(--muted); font-size: 12px; margin: 11px 0 0; line-height: 1.5; }
+.start-workout { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 22px 0; }
+.start-workout h3 { margin: 0; font-size: 18px; letter-spacing: -.04em; }
+.start-workout p { color: var(--muted); font-size: 12px; margin: 5px 0 16px; }
+.start-workout .button { margin-right: 8px; }
+.workout-actions { display: flex; align-items: center; gap: 10px; margin-top: 17px; }
+.skip-panel { margin-top: 16px; border: 1px solid var(--rule-dark); background: var(--surface-soft); padding: 14px; }
+.skip-actions { display: flex; gap: 8px; margin-top: 12px; }
 .set-table { width: 100%; border-collapse: collapse; margin-top: 14px; }
 .set-table th { color: var(--muted-2); font-size: 9px; text-align: left; text-transform: uppercase; letter-spacing: .08em; padding: 0 6px 8px; }
 .set-table td { border-top: 1px solid var(--rule); padding: 8px 6px; font-size: 12px; }
@@ -249,6 +267,11 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
   .grid.stats, .grid.three, .side-stack { grid-template-columns: 1fr 1fr; gap: 10px; }
   .today-card { display: block; padding: 18px; }
   .today-card .button { width: 100%; margin-top: 18px; text-align: center; }
+  .onboarding-steps { grid-template-columns: 1fr; }
+  .onboarding-step { border-left: 0; border-top: 1px solid var(--rule); padding: 12px 0; }
+  .onboarding-step:first-child { border-top: 0; }
+  .onboarding-footer { align-items: stretch; flex-direction: column; }
+  .onboarding-footer .button { text-align: center; }
   .quick-stats { grid-template-columns: 1fr; }
   .quick-stat { border-left: 0; border-top: 1px solid var(--rule); }
   .quick-stat:first-child { border-top: 0; }
@@ -264,6 +287,9 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
   .set-table th, .set-table td { padding-left: 3px; padding-right: 3px; }
   .set-input { min-width: 42px; padding: 6px 4px; }
   .dropzone { min-height: 200px; }
+  .start-workout .button, .workout-actions .button { width: 100%; margin: 0 0 8px; text-align: center; }
+  .workout-actions { display: block; }
+  .skip-actions { display: grid; grid-template-columns: 1fr 1fr; }
   .day-navigation { padding: 12px; }
   .week-strip { gap: 3px; }
   .week-day { min-height: 64px; padding-left: 2px; padding-right: 2px; }
