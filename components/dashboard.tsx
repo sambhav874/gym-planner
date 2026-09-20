@@ -30,28 +30,36 @@ export function Dashboard({ members, assignment }: { members: Member[]; assignme
   }, [assignment.days, assignment.startDate, today]);
   const currentDay = assignment.days.find((day) => day.planDay === currentPlanDay) || assignment.days[0];
   const currentStatus = currentDay ? dayStatus(assignment.startDate, currentDay.planDay, today, sessions[currentDay.planDay] || null) : "planned";
+  const weekDays = assignment.days.filter((day) => day.week === currentDay?.week).slice(0, 7);
+  const loggedThisWeek = weekDays.filter((day) => ["done", "in-progress"].includes(dayStatus(assignment.startDate, day.planDay, today, sessions[day.planDay] || null))).length;
 
   return (
     <>
       <div className="topbar">
-        <div><div className="eyebrow">{formatPlanWeekday(today)}, {formatPlanDate(today)}</div><h1>Good morning, Sambhav.</h1><p>Your group is moving well. Here is what needs your attention today.</p></div>
-        <div className="top-actions"><Link className="button ghost" href="/import">Trainer workspace</Link><span className="avatar large">SJ</span></div>
+        <div><div className="eyebrow">{formatPlanWeekday(today)}, {formatPlanDate(today)}</div><h1>Good morning, Sambhav.</h1><p>Start with today’s plan. Everything else can wait.</p></div>
+        <div className="top-actions"><Link className="button ghost" href="/import">Trainer tools</Link><span className="avatar large">SJ</span></div>
       </div>
-      <div className="grid stats">
-        <div className="card accent-card"><div className="stat-label">Today’s focus · Day {currentDay?.planDay}</div><div className="stat-value">{currentDay?.focus || "Plan day"}</div><div className="stat-meta good">{statusLabels[currentStatus]} · {currentDay?.exercises.length || 0} movements</div></div>
-        <div className="card"><div className="stat-label">Weekly adherence</div><div className="stat-value">72%</div><div className="stat-meta good">+8% from last week</div></div>
-        <div className="card"><div className="stat-label">Current weight</div><div className="stat-value">78.0 <span style={{ fontSize: 14, color: "var(--muted)" }}>kg</span></div><div className="stat-meta">2-week average · 78.4 kg</div></div>
-        <div className="card"><div className="stat-label">Today</div><div className="stat-value">{formatPlanDate(today, false)}</div><div className="stat-meta">Past unlogged days are not done</div></div>
+
+      <div className="today-card card">
+        <div><div className="eyebrow">Today · Day {currentDay?.planDay}</div><h2>{currentDay?.focus || "Your plan"}</h2><p>{currentDay?.isRecovery ? "A lighter day still counts." : `${currentDay?.exercises.length || 0} movements to complete`} · <strong>{statusLabels[currentStatus]}</strong></p></div>
+        <Link className="button primary" href={`/plan/sambhav?day=${currentDay?.planDay || 1}`}>{currentStatus === "done" ? "View today’s log" : currentStatus === "today" ? "Start today" : "Review today"}</Link>
       </div>
-      <div className="notice" style={{ marginTop: 18 }}><span className="notice-icon">!</span><span><strong>Day-based tracking is on.</strong> Past dates without a saved completion are marked Not done. Open any dated day to log or edit it.</span></div>
-      <div className="section-label"><h2>Your plan</h2><Link href="/plan/sambhav">Open full plan →</Link></div>
-      <div className="grid two">
-        <div className="card"><div className="card-title-row"><div><h2>Training schedule</h2><p className="card-subtitle">Week 1 · {formatPlanDate(assignment.startDate, false)}–{formatPlanDate(addDaysToIso(assignment.startDate, 6), false)}</p></div><span className="tag">{assignment.days.filter((day) => dayStatus(assignment.startDate, day.planDay, today, sessions[day.planDay] || null) === "done").length} logged</span></div><div className="day-list">{assignment.days.slice(0, 7).map((day) => { const date = addDaysToIso(assignment.startDate, day.planDay - 1); const status = dayStatus(assignment.startDate, day.planDay, today, sessions[day.planDay] || null); return <Link href={`/plan/sambhav?day=${day.planDay}`} className="day-row" key={day.id}><div className="day-number">{formatPlanDate(date, false)}<small>Day {day.planDay}</small></div><div><div className="day-name">{day.weekday} · {day.focus}</div><div className="day-meta">{day.isRecovery ? day.cardio || "Recovery day" : `${day.exercises.length} exercises · ${day.cardio || "No cardio target"}`}</div></div><span className={`status-pill ${status}`}>{statusLabels[status]}</span></Link>; })}</div></div>
-        <div className="grid" style={{ alignContent: "start" }}>
-          <div className="card"><div className="card-title-row"><div><h2>Group activity</h2><p className="card-subtitle">Open by design. See how everyone is doing.</p></div><span className="tag">Live</span></div><div className="member-list">{activity.map((item) => <div className="member-row" key={`${item.name}-${item.when}`}><div className="member-main"><span className="avatar">{item.name.split(" ").map((word) => word[0]).join("")}</span><div><strong>{item.name}</strong><span>{item.action}</span></div></div><span className="profile-role">{item.when}</span></div>)}</div></div>
-          <div className="card"><div className="card-title-row"><div><h2>Group members</h2><p className="card-subtitle">Browse each person’s active plan.</p></div><span className="tag">{members.length} people</span></div><div className="member-list">{members.map((member) => <Link href={`/plan/${member.id}`} className="member-row" key={member.id}><div className="member-main"><span className="avatar">{member.initials}</span><div><strong>{member.name}</strong><span>{member.focus}</span></div></div><div className="member-progress"><div className="progress-bar"><span style={{ width: `${member.progress}%` }} /></div><div className="member-progress-label">{member.progress}%</div></div></Link>)}</div></div>
-        </div>
+
+      <div className="quick-stats">
+        <div className="quick-stat"><span>This week</span><strong>{loggedThisWeek} / {weekDays.length}</strong><small>days with activity</small></div>
+        <div className="quick-stat"><span>Plan length</span><strong>{assignment.days.length} days</strong><small>started {formatPlanDate(assignment.startDate, false)}</small></div>
+        <div className="quick-stat"><span>Current weight</span><strong>78.0 kg</strong><small>2-week average · 78.4 kg</small></div>
       </div>
+
+      <div className="notice" style={{ marginTop: 20 }}><span className="notice-icon">i</span><span><strong>Simple rule:</strong> log the day when you finish it. Past days without a log are marked Not done, and you can edit them anytime.</span></div>
+
+      <div className="section-label"><h2>Your week</h2><Link href="/plan/sambhav">See full plan →</Link></div>
+      <div className="card schedule-card"><div className="card-title-row"><div><h2>Week {currentDay?.week || 1}</h2><p className="card-subtitle">{weekDays.length ? `${formatPlanDate(addDaysToIso(assignment.startDate, weekDays[0].planDay - 1), false)}–${formatPlanDate(addDaysToIso(assignment.startDate, weekDays.at(-1)?.planDay ? weekDays.at(-1)!.planDay - 1 : 0), false)}` : "Your dated schedule"}</p></div><span className="tag">{loggedThisWeek} logged</span></div><div className="day-list">{weekDays.map((day) => { const date = addDaysToIso(assignment.startDate, day.planDay - 1); const status = dayStatus(assignment.startDate, day.planDay, today, sessions[day.planDay] || null); return <Link href={`/plan/sambhav?day=${day.planDay}`} className="day-row" key={day.id}><div className="day-number">{formatPlanDate(date, false)}<small>Day {day.planDay}</small></div><div><div className="day-name">{day.weekday} · {day.focus}</div><div className="day-meta">{day.isRecovery ? day.cardio || "Recovery day" : `${day.exercises.length} exercises · ${day.cardio || "No cardio target"}`}</div></div><span className={`status-pill ${status}`}>{statusLabels[status]}</span></Link>; })}</div></div>
+
+      <div className="section-label"><h2>Your group</h2><span className="tag">{members.length} people</span></div>
+      <div className="card"><p className="card-subtitle" style={{ marginTop: 0, marginBottom: 14 }}>You can open another member’s plan whenever you need to.</p><div className="member-list">{members.map((member) => <Link href={`/plan/${member.id}`} className="member-row" key={member.id}><div className="member-main"><span className="avatar">{member.initials}</span><div><strong>{member.name}</strong><span>{member.focus}</span></div></div><div className="member-progress"><div className="progress-bar"><span style={{ width: `${member.progress}%` }} /></div><div className="member-progress-label">{member.progress}%</div></div></Link>)}</div></div>
+
+      <details className="simple-details"><summary>Recent group activity</summary><div className="member-list">{activity.map((item) => <div className="member-row" key={`${item.name}-${item.when}`}><div className="member-main"><span className="avatar">{item.name.split(" ").map((word) => word[0]).join("")}</span><div><strong>{item.name}</strong><span>{item.action}</span></div></div><span className="profile-role">{item.when}</span></div>)}</div></details>
     </>
   );
 }

@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const links = [
-  { href: "/", label: "Overview" },
+  { href: "/", label: "Home" },
   { href: "/plan/sambhav", label: "My plan" },
   { href: "/progress", label: "Progress" },
-  { href: "/import", label: "Import plan" },
+  { href: "/import", label: "Trainer tools" },
 ];
 
 export function AppShell({ children, active = "" }: { children: React.ReactNode; active?: string }) {
@@ -12,7 +12,7 @@ export function AppShell({ children, active = "" }: { children: React.ReactNode;
     <div className="app-shell">
       <aside className="sidebar">
         <Link href="/" className="brand"><span className="brand-mark">F</span><span className="brand-name">Formwork</span></Link>
-        <div className="eyebrow" style={{ padding: "0 10px 10px" }}>Your training group</div>
+        <div className="eyebrow" style={{ padding: "0 10px 10px" }}>Training group</div>
         <nav className="nav">
           {links.map((link) => <Link key={link.href} href={link.href} className={`nav-link ${active === link.href ? "active" : ""}`}><span>{link.label}</span>{link.href === "/import" && <span className="nav-context">Trainer</span>}</Link>)}
         </nav>
