@@ -20,7 +20,7 @@ Formwork is a mobile-first shared training-plan workspace. It turns trainer Exce
   - `Sambhav Workout and Diet Plan.xlsx`
 - Parser tests that validate the expected 30-day and 209-exercise outputs.
 
-The app runs in demo mode without external credentials. Set logs, imported drafts, and published plans use browser local storage so the main flow is testable immediately. The data types and route boundaries are ready for Supabase persistence and passwordless group invites in the next integration step.
+The app runs in demo mode without external credentials. Set logs, imported drafts, and published plans use browser local storage so the main flow is testable immediately. The Supabase schema foundation is in `supabase/migrations/20260922000000_initial_schema.sql`; the application persistence/auth wiring can be enabled after applying that migration.
 
 ## Run locally
 
@@ -53,4 +53,4 @@ npm run build
 
 ## Production integration seam
 
-Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` from `.env.example` when connecting persistence and magic-link access. Persist the entities described in the implementation plan: groups, users, templates, assignments, versioned plans, sessions, set logs, metrics, and publish events.
+Create a Supabase project named Formwork, run the SQL migration in the Supabase SQL Editor, enable email magic-link authentication, and add `NEXT_PUBLIC_SUPABASE_URL` plus `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from `.env.example`. Never add the database password or a service-role key to `NEXT_PUBLIC_*` variables or commit them. The app currently keeps its demo fallback in local storage until persistence/auth wiring is enabled.
