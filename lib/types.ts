@@ -83,3 +83,36 @@ export interface PlanAssignment {
   dietDays: DietDay[];
   guidance: GuidanceSection[];
 }
+
+export type LoggedSetType = "normal" | "warmup" | "drop" | "failure";
+
+export interface LoggedSet {
+  setNumber?: number;
+  type?: LoggedSetType;
+  load: string;
+  reps: string;
+  rir: string;
+  completed: boolean;
+}
+
+export interface WeightEntry {
+  id: string;
+  date: string;
+  weightKg: number;
+  note?: string;
+}
+
+export interface DietLog {
+  date: string;
+  completedMeals: string[];
+  waterLiters: number;
+  steps?: number;
+}
+
+export interface ExerciseSessionHistory {
+  date: string;
+  planDay: number;
+  exerciseName: string;
+  sets: LoggedSet[];
+}
+

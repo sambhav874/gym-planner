@@ -13,6 +13,22 @@
   --blue: #2456c5;
 }
 
+[data-theme="dark"] {
+  --canvas: #0e0f0e;
+  --surface: #171817;
+  --surface-soft: #202220;
+  --ink: #f4f5f2;
+  --muted: #9da49c;
+  --muted-2: #6d736c;
+  --rule: #2e312e;
+  --rule-dark: #454a45;
+  --red: #e04437;
+  --red-soft: #281412;
+  --green: #258c5c;
+  --blue: #3b6fd6;
+}
+
+
 * { box-sizing: border-box; }
 html { background: var(--canvas); }
 body {
@@ -300,3 +316,671 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* --------------------------------------------------------------------------
+   Lifter Ergonomics: Rest Timer Bar
+   -------------------------------------------------------------------------- */
+.rest-timer-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-top: 2px solid var(--ink);
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease;
+}
+
+.rest-timer-progress {
+  height: 3px;
+  background: var(--red);
+  transition: width 0.3s linear;
+}
+
+.rest-timer-content {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.rest-timer-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rest-timer-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.rest-timer-digits {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  min-width: 65px;
+}
+
+.rest-timer-presets {
+  display: flex;
+  gap: 4px;
+}
+
+.rest-preset-btn {
+  border: 1px solid var(--rule);
+  background: var(--surface-soft);
+  color: var(--ink);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  border-radius: 3px;
+}
+
+.rest-preset-btn:hover,
+.rest-preset-btn.active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.rest-timer-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timer-adj-btn {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--muted);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  border-radius: 3px;
+}
+
+.timer-adj-btn:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.timer-close-btn {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.timer-close-btn:hover {
+  color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   Dynamic Sets & Previous Session Memory
+   -------------------------------------------------------------------------- */
+.set-table-wrap {
+  width: 100%;
+}
+
+.prev-session-hint {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 4px 6px;
+  margin-top: 8px;
+  background: var(--surface-soft);
+  border-left: 2px solid var(--rule-dark);
+}
+
+.set-type-tag {
+  border: 1px solid var(--rule);
+  background: var(--surface-soft);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.set-type-warmup .set-type-tag {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #f59e0b;
+}
+
+.set-type-drop .set-type-tag {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #ef4444;
+}
+
+.set-type-failure .set-type-tag {
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+}
+
+.delete-set-btn {
+  border: none;
+  background: transparent;
+  color: var(--muted-2);
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.delete-set-btn:hover {
+  color: var(--red);
+}
+
+.set-table-footer {
+  margin-top: 6px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* --------------------------------------------------------------------------
+   Modal Backdrop & Lifter Utilities (Plate / 1RM)
+   -------------------------------------------------------------------------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: grid;
+  place-items: center;
+  z-index: 200;
+  padding: 16px;
+  backdrop-filter: blur(2px);
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 2px solid var(--ink);
+  padding: 24px;
+}
+
+.calc-sections {
+  display: grid;
+  gap: 18px;
+}
+
+.calc-section h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.calc-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.plate-visual-box {
+  background: var(--surface-soft);
+  border: 1px solid var(--rule);
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 3px;
+}
+
+.plate-summary strong {
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.plate-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.plate-chip {
+  background: var(--surface);
+  border: 1px solid var(--ink);
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 3px;
+}
+
+.est-1rm-result {
+  margin-top: 14px;
+  background: var(--surface-soft);
+  padding: 12px;
+  border-left: 3px solid var(--red);
+}
+
+.est-1rm-result > span {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.est-1rm-result > strong {
+  display: block;
+  font-size: 24px;
+  color: var(--ink);
+  margin: 4px 0 8px;
+}
+
+.rep-percentages {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------------
+   Meal Checklist & Hydration
+   -------------------------------------------------------------------------- */
+.meal-checklist {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.meal-check-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.meal-check-item.completed p {
+  color: var(--muted);
+}
+
+.meal-content {
+  flex: 1;
+}
+
+.meal-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meal-content p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.tag.green {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+/* --------------------------------------------------------------------------
+   Gym Mode Toggle, Day Pager & Print Sheet
+   -------------------------------------------------------------------------- */
+.gym-mode-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-soft);
+  border: 1px solid var(--rule);
+  padding: 8px 10px;
+  border-radius: 3px;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.gym-mode-toggle:hover {
+  border-color: var(--ink);
+}
+
+.link-btn-subtle {
+  border: none;
+  background: transparent;
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 0;
+  cursor: pointer;
+}
+
+.link-btn-subtle:hover {
+  text-decoration: underline;
+}
+
+.day-pager {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+
+.print-sheet-card h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+
+.chart-tooltip-badge {
+  margin-top: 10px;
+  font-size: 11px;
+  background: var(--surface-soft);
+  padding: 6px 10px;
+  border: 1px solid var(--rule);
+  display: inline-block;
+}
+
+.quick-weight-form {
+  margin-top: 12px;
+  border-color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   Guided Focus Flow (Mobile-First Ergonomics)
+   -------------------------------------------------------------------------- */
+.view-mode-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.segmented-control {
+  display: inline-flex;
+  background: var(--surface-soft);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.segment-btn {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.14s ease;
+}
+
+.segment-btn:hover {
+  color: var(--ink);
+}
+
+.segment-btn.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.workout-flow-container {
+  display: grid;
+  gap: 16px;
+}
+
+.flow-stepper-header {
+  background: var(--surface-soft);
+  border: 1px solid var(--rule);
+  padding: 14px;
+  border-radius: 4px;
+}
+
+.flow-stepper-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.flow-completion-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.flow-progress-track {
+  height: 4px;
+  background: var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.flow-progress-fill {
+  height: 100%;
+  background: var(--red);
+  transition: width 0.25s ease;
+}
+
+.flow-movement-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.flow-movement-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.movement-chip {
+  flex: 0 0 auto;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 6px 10px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.movement-chip:hover {
+  border-color: var(--ink);
+}
+
+.movement-chip.active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.movement-chip.completed .chip-num {
+  color: var(--green);
+  font-weight: 900;
+}
+
+.movement-chip.active.completed .chip-num {
+  color: #34d399;
+}
+
+.chip-name {
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.active-movement-card {
+  background: var(--surface);
+  border: 1px solid var(--rule-dark);
+  padding: 20px;
+  border-radius: 4px;
+}
+
+.movement-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.coach-cue-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--surface-soft);
+  border-left: 3px solid var(--red);
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  margin-bottom: 16px;
+  border-radius: 0 3px 3px 0;
+}
+
+.flow-nav-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  gap: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile App-Like Bottom Navigation
+   -------------------------------------------------------------------------- */
+@media (max-width: 680px) {
+  .mobile-nav {
+    display: flex !important;
+    position: fixed !important;
+    z-index: 90 !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 8px !important;
+    padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+    border: 1px solid var(--rule-dark) !important;
+    background: var(--surface) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+  }
+
+  .mobile-nav a,
+  .mobile-theme-btn {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 3px !important;
+    color: var(--muted) !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    padding: 4px 8px !important;
+    text-decoration: none !important;
+    border: none !important;
+    background: transparent !important;
+    cursor: pointer !important;
+  }
+
+  .mobile-nav a.active {
+    color: var(--red) !important;
+    border-bottom: none !important;
+  }
+
+  .mobile-nav svg {
+    stroke-width: 2.2 !important;
+  }
+
+  .main {
+    padding-bottom: 96px !important;
+  }
+
+  .rest-timer-bar {
+    bottom: 64px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Physical Training Sheet Print Stylesheet
+   -------------------------------------------------------------------------- */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .sidebar,
+  .mobile-nav,
+  .top-actions,
+  .filter-row,
+  .button,
+  .rest-timer-bar,
+  .modal-backdrop,
+  .footer-note,
+  .quick-weight-form,
+  .notice,
+  .view-mode-toggle-row {
+    display: none !important;
+  }
+
+  .app-shell {
+    display: block !important;
+  }
+
+  .main {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .card {
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+  }
+
+  .set-table th,
+  .set-table td {
+    border-color: #cccccc !important;
+    color: #000000 !important;
+  }
+
+  .set-input {
+    border: 1px solid #999999 !important;
+    background: #ffffff !important;
+  }
+
+  .check-button {
+    border: 1px solid #000000 !important;
+    background: #ffffff !important;
+  }
+}
+
+
